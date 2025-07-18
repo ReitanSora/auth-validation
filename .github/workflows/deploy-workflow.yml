@@ -3,6 +3,10 @@ on:
   push:
     branches: [ master ]
 
+permissions:
+  contents: read
+  packages: write
+
 jobs:
   build:
     name: Build container image and push to Docker Hub
@@ -21,7 +25,7 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
-          password: ${{ secrets.GHCR_PAT }}
+          password: ${{ secrets.GITHUB_TOKEN }}
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
       - name: Set up Docker Buildx
@@ -32,20 +36,6 @@ jobs:
           context: .
           push: true
           tags: ghcr.io/${{ env.GHCR_OWNER }}/${{ env.IMAGE_NAME }}:latest
-      - name: Make GHCR package public
-        env:
-          GHCR_PAT: ${{ secrets.GHCR_PAT }}
-          PACKAGE: ${{ env.IMAGE_NAME }}
-        run: |
-          echo "☁️ Setting GHCR package visibility to public…"
-          curl -sf \
-            -H "Accept: application/vnd.github+json" \
-            -H "Authorization: Bearer $GHCR_PAT" \
-            -X PATCH \
-            https://api.github.com/user/packages/container/$PACKAGE/visibility \
-            -d '{"visibility":"public"}' \
-          && echo "✅ Package is now public" \
-          || (echo "❌ Failed to set package visibility" && exit 1)
 
   deploy:
     needs: build
