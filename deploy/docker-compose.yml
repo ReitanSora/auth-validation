@@ -1,6 +1,6 @@
 services:
-  auth-login:
-    image: reitansora/auth-login:latest
+  auth-validation:
+    image: reitansora/auth-validation:latest
     container_name: auth-login
     restart: unless-stopped
     expose:
@@ -20,7 +20,7 @@ services:
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
     depends_on:
-      - auth-login
+      - auth-validation
     networks:
       - webnet
     command: ["sh","-c","echo 'Waiting 15s for auth-login to start…' && sleep 15 && echo 'Starting nginx now' && exec nginx -g 'daemon off;'"]
