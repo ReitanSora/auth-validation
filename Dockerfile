@@ -2,14 +2,9 @@ FROM gradle:8.7-jdk21 AS build
 
 WORKDIR /home/gradle/src
 
-COPY gradlew .
-COPY gradle gradle
-
-RUN chmod +x gradlew
-
 COPY . .
 
-RUN ./gradlew assemble --no-daemon -x test
+RUN gradle assemble --no-daemon -x test
 
 FROM eclipse-temurin:21-jre-alpine
 
