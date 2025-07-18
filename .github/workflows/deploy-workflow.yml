@@ -35,14 +35,17 @@ jobs:
       - name: Make GHCR package public
         env:
           GHCR_PAT: ${{ secrets.GHCR_PAT }}
-          OWNER: ${{ env.GHCR_OWNER }}
           PACKAGE: ${{ env.IMAGE_NAME }}
         run: |
-          curl -X PATCH \
-            -H "Authorization: Bearer $GHCR_PAT" \
+          echo "☁️ Setting GHCR package visibility to public…"
+          curl -sf \
             -H "Accept: application/vnd.github+json" \
-            https://api.github.com/users/$OWNER/packages/container/$PACKAGE/visibility \
-            -d '{"visibility":"public"}'
+            -H "Authorization: Bearer $GHCR_PAT" \
+            -X PATCH \
+            https://api.github.com/user/packages/container/$PACKAGE/visibility \
+            -d '{"visibility":"public"}' \
+          && echo "✅ Package is now public" \
+          || (echo "❌ Failed to set package visibility" && exit 1)
 
   deploy:
     needs: build
