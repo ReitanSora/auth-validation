@@ -7,6 +7,10 @@ jobs:
   build:
     name: Build container image and push to Docker Hub
     runs-on: ubuntu-latest
+    env:
+      GHCR_OWNER: reitansora
+      IMAGE_NAME: auth-validation
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -27,7 +31,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: ghcr.io/${{ github.repository_owner }}/${{ github.repository }}:latest
+          tags: ghcr.io/${{ env.GHCR_OWNER }}/${{ env.IMAGE_NAME }}:latest
 
   deploy:
     needs: build
