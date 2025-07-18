@@ -32,6 +32,17 @@ jobs:
           context: .
           push: true
           tags: ghcr.io/${{ env.GHCR_OWNER }}/${{ env.IMAGE_NAME }}:latest
+      - name: Make GHCR package public
+        env:
+          GHCR_PAT: ${{ secrets.GHCR_PAT }}
+          OWNER: ${{ env.GHCR_OWNER }}
+          PACKAGE: ${{ env.IMAGE_NAME }}
+        run: |
+          curl -X PATCH \
+            -H "Authorization: Bearer $GHCR_PAT" \
+            -H "Accept: application/vnd.github+json" \
+            https://api.github.com/users/$OWNER/packages/container/$PACKAGE/visibility \
+            -d '{"visibility":"public"}'
 
   deploy:
     needs: build
