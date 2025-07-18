@@ -1,6 +1,6 @@
 services:
   auth-validation:
-    image: ghcr.io:reitansora/auth-validation:latest
+    image: ghcr.io/reitansora/auth-validation:latest
     container_name: auth-login
     restart: unless-stopped
     expose:
